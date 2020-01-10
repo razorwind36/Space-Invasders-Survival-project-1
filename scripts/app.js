@@ -1,6 +1,5 @@
 function init() {
 
-  const playBtn = document.querySelector('play')
   const body = document.querySelector('body')
   const grid = document.querySelector('.grid')
   const scoreView = document.querySelector('#score')
@@ -53,7 +52,6 @@ function init() {
   }
 
   function alienProjectile(alienFireIndex){
-    console.log(listOfIntervals)
 
     if (alienFireBoxes[alienFireIndex].shotLocation > width * width){
 
@@ -88,7 +86,6 @@ function init() {
         body.removeChild(grid)
         gameName.style.display = 'none'
         gameOver.style.display = 'block'
-        playBtn.style.display = 'block'
       }
     } 
   }
@@ -105,7 +102,7 @@ function init() {
 
     let intReady = false
     while (!intReady){
-      const alienFireInterval = setInterval(alienProjectile, 200, alienFireBoxes.indexOf(alienShot))
+      const alienFireInterval = setInterval(alienProjectile, 100, alienFireBoxes.indexOf(alienShot))
       if (!listOfIntervals.includes(alienFireInterval)){
         listOfIntervals.push(alienFireInterval)
         alienFireBoxes[alienFireBoxes.indexOf(alienShot)].intervalID = alienFireInterval
@@ -133,6 +130,7 @@ function init() {
   function alienBlock(alienIndex){ // Aliens movement logic
     // Movement control system
     if (alienBoxes[alienIndex].locations.length === 0){
+      console.log('I worked')
       clearInterval(alienBoxes[alienIndex].intervalID)
       alienBoxes[alienIndex] = undefined
     }
