@@ -35,17 +35,17 @@ span {
   color: white;
 }
 .player {
-  content: url('assets/4621256180537262104_1.png');
+  content: url('~/assets/4621256180537262104_1.png');
 }
 h1{
   margin-bottom: 100px;
   color: greenyellow;
 }
 .fire{
-  content: url('assets/FAVPNG_missile-weapon-drawing-silhouette-projectile_2uL5sVcE.png');
+  content: url('~/assets/FAVPNG_missile-weapon-drawing-silhouette-projectile_2uL5sVcE.png');
 }
 .alien{
-  content: url('assets/http___pluspng.com_img-png_space-invaders-png-space-invaders-alien-transparent-background-png-600.png');
+  content: url('~/assets/http___pluspng.com_img-png_space-invaders-png-space-invaders-alien-transparent-background-png-600.png');
 }
 .gameover {
   display: none;
