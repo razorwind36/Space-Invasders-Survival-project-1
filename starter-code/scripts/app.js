@@ -32,6 +32,8 @@ function init() {
   listOfIntervals.push(setInterval(alienFire,500))
 
   listOfIntervals.push(setInterval(collisonCheck,1))
+
+  listOfIntervals.push(setInterval(killCheck,1))
   // setInterval(alienGenerator,10000) // create enemies every 10 secs
 
   function collisonCheck() {
@@ -53,7 +55,6 @@ function init() {
   }
 
   function alienProjectile(alienFireIndex){
-    console.log(listOfIntervals)
 
     if (alienFireBoxes[alienFireIndex].shotLocation > width * width){
 
@@ -79,7 +80,9 @@ function init() {
         livesLeft.innerHTML = lives
       } else if (lives === 1) {
 
-        listOfIntervals.forEach(e => clearInterval(e))
+        listOfIntervals.forEach((e) => {
+          clearInterval(e)
+        })
 
         const gameName = document.querySelector('.gamename')
         const gameOver = document.querySelector('.gameover')
@@ -89,6 +92,7 @@ function init() {
         gameName.style.display = 'none'
         gameOver.style.display = 'block'
         playBtn.style.display = 'block'
+        
       }
     } 
   }
@@ -256,7 +260,7 @@ function init() {
     if (squares[fireBox.shotIndex].classList.contains('alien')){
 
       squares[fireBox.shotIndex].classList.remove('alien')
-      killCheck()
+      // killCheck()
       squares[fireBox.shotIndex].classList.remove('fire')
 
       clearInterval(fireBox.intervalID)
