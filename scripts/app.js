@@ -31,7 +31,6 @@ function init() {
   listOfIntervals.push(setInterval(alienFire,500))
 
   listOfIntervals.push(setInterval(collisonCheck,1))
-  // setInterval(alienGenerator,10000) // create enemies every 10 secs
 
   function collisonCheck() {
     for (let i = 0; i < alienFireBoxes.length; i++){
@@ -53,46 +52,48 @@ function init() {
 
   function alienProjectile(alienFireIndex){
 
-    if (alienFireBoxes[alienFireIndex].shotLocation > width * width){
+    
+    if (alienFireBoxes[alienFireIndex].shotLocation < width * width){
 
-      squares[alienFireBoxes[alienFireIndex].shotLocation - width].classList.remove('alienfire')
-      clearInterval(alienFireBoxes[alienFireIndex].intervalID)
-      alienFireBoxes[alienFireIndex] = undefined
-    } else {
       squares[alienFireBoxes[alienFireIndex].shotLocation].classList.remove('alienfire')
       alienFireBoxes[alienFireIndex].shotLocation = alienFireBoxes[alienFireIndex].shotLocation + width
       squares[alienFireBoxes[alienFireIndex].shotLocation].classList.add('alienfire')
-    }
+      
     
 
-    if (alienFireBoxes[alienFireIndex].shotLocation === playerIndex){
+      if (alienFireBoxes[alienFireIndex].shotLocation === playerIndex){
 
-      squares[alienFireBoxes[alienFireIndex].shotLocation].classList.remove('alienfire')
+        squares[alienFireBoxes[alienFireIndex].shotLocation].classList.remove('alienfire')
 
+        clearInterval(alienFireBoxes[alienFireIndex].intervalID)
+        alienFireBoxes[alienFireIndex] = undefined
+
+        if (lives > 1){
+          lives -= 1
+          livesLeft.innerHTML = lives
+        } else if (lives === 1) {
+
+          listOfIntervals.forEach(e => clearInterval(e))
+
+          const gameName = document.querySelector('.gamename')
+          const gameOver = document.querySelector('.gameover')
+          lives -= 1
+          livesLeft.innerHTML = lives
+          body.removeChild(grid)
+          gameName.style.display = 'none'
+          gameOver.style.display = 'block'
+        }
+      } 
+    }
+    else {
       clearInterval(alienFireBoxes[alienFireIndex].intervalID)
       alienFireBoxes[alienFireIndex] = undefined
-
-      if (lives > 1){
-        lives -= 1
-        livesLeft.innerHTML = lives
-      } else if (lives === 1) {
-
-        listOfIntervals.forEach(e => clearInterval(e))
-
-        const gameName = document.querySelector('.gamename')
-        const gameOver = document.querySelector('.gameover')
-        lives -= 1
-        livesLeft.innerHTML = lives
-        body.removeChild(grid)
-        gameName.style.display = 'none'
-        gameOver.style.display = 'block'
-      }
-    } 
+    }
   }
   function alienFire(){
     const aliens = document.querySelectorAll('.alien')
 
-    const chosenAlien = aliens[randomizer(aliens.length - 1)]
+    const chosenAlien = aliens[randomizer(aliens.length)]
 
     const alienShot = {
       shotLocation: squares.indexOf(chosenAlien) + width
@@ -114,13 +115,20 @@ function init() {
     
     
   }
-  function killCheck(){ // check is an enemy should be removed from an alien interval
-    for (const alien in alienBoxes){
-      const alive = alienBoxes[alien].locations.filter( n => {
-        return (!squares[n].classList.contains('fire'))
-      })
-      alienBoxes[alien].locations = alive
+  function killCheck(alien){ // check is an enemy should be removed from an alien interval
+    let index
+    let alive
+    for (let i = 0; i < alienBoxes.length; i++){
+      
+      if (alienBoxes[i] !== undefined && alienBoxes[i].locations.includes(alien)){
+        index = i
+        alive = alienBoxes[i].locations.filter( n => {
+          // return (!squares[n].classList.contains('fire'))
+          return (n !== alien)
+        })
+      }
     }
+    alienBoxes[index].locations = alive
   }
 
   function randomizer(e = 100){ // Makes a random number and returns it
@@ -130,17 +138,26 @@ function init() {
   function alienBlock(alienIndex){ // Aliens movement logic
     // Movement control system
     if (alienBoxes[alienIndex].locations.length === 0){
-      console.log('I worked')
       clearInterval(alienBoxes[alienIndex].intervalID)
       alienBoxes[alienIndex] = undefined
     }
+    let isRight = true
+    let isLeft = true
+    for (let i = 0; i < alienBoxes[alienIndex].locations.length; i++){
+      if (alienBoxes[alienIndex].locations[i] % width === width - 1){
+        isRight = false
+      } else if (alienBoxes[alienIndex].locations[i] % width === 0){
+        isLeft = false
+      }
+    }
 
     alienBoxes[alienIndex].locations.forEach(n => squares[n].classList.remove('alien'))
-    if (alienBoxes[alienIndex].locations[alienBoxes[alienIndex].locations.length - 1] % width < width - 1 && alienBoxes[alienIndex].direction === 'right'){
+
+    if (isRight === true && alienBoxes[alienIndex].direction === 'right'){
 
       alienBoxes[alienIndex].locations = alienBoxes[alienIndex].locations.map(n => n + 1)
 
-    } else if (alienBoxes[alienIndex].locations[0] % width > 0 && alienBoxes[alienIndex].direction === 'left'){
+    } else if (isLeft === true && alienBoxes[alienIndex].direction === 'left'){
 
       alienBoxes[alienIndex].locations = alienBoxes[alienIndex].locations.map(n => n - 1)
 
@@ -254,7 +271,7 @@ function init() {
     if (squares[fireBox.shotIndex].classList.contains('alien')){
 
       squares[fireBox.shotIndex].classList.remove('alien')
-      killCheck()
+      killCheck(fireBox.shotIndex)
       squares[fireBox.shotIndex].classList.remove('fire')
 
       clearInterval(fireBox.intervalID)
